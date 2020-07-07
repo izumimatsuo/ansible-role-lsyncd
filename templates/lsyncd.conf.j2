@@ -1,0 +1,24 @@
+----
+-- User configuration file for lsyncd.
+--
+-- Simple example for default rsync, but executing moves through on the target.
+--
+-- For more examples, see /usr/share/doc/lsyncd*/examples/
+--
+settings {
+  logfile="/var/log/lsyncd.log",
+  statusFile="/var/tmp/lsyncd.stat",
+  nodaemon=false,
+  insist=1
+}
+sync {
+  default.rsyncssh,
+  source="{{ lsyncd_source_dir }}",
+  host="{{ lsyncd_ssh_host }}",
+  targetdir="{{ lsyncd_target_dir }}",
+  delay=1,
+  delete=false,
+  rsync={
+    archive=true
+  }
+}

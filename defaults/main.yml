@@ -1,0 +1,5 @@
+---
+# defaults file for ansible-role-lsyncd
+lsyncd_source_dir: "/root/"
+lsyncd_target_dir: "/root/"
+lsyncd_ssh_host: "localhost"

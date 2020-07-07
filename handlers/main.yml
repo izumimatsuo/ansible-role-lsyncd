@@ -1,0 +1,7 @@
+---
+# handlers file for ansible-role-lsyncd
+- name: restart lsyncd service
+  service:
+    name: lsyncd
+    state: restarted
+  tags: lsyncd

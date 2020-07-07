@@ -1,0 +1,39 @@
+---
+# tasks file for ansible-role-lsyncd
+- name: install epel repository
+  yum:
+    name: epel-release
+  tags: lsyncd
+
+- name: install lsyncd package
+  yum:
+    name:
+      - lsyncd
+      - rsync
+  tags: lsyncd
+
+- name: copy lsyncd conf
+  template:
+    src: lsyncd.conf.j2
+    dest: /etc/lsyncd.conf
+    mode: 0644
+  notify: restart lsyncd service
+  tags: lsyncd
+
+- name: copy lsyncd service file
+  template:
+    src: lsyncd.service.j2
+    dest: /usr/lib/systemd/system/lsyncd.service
+    mode: 0644
+  tags: lsyncd
+
+- name: daemon reload
+  systemd: daemon_reload=yes
+  tags: lsyncd
+
+- name: start lsyncd service
+  service:
+    name: lsyncd
+    state: started
+    enabled: yes
+  tags: lsyncd
