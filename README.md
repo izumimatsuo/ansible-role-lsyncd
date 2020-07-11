@@ -1,6 +1,6 @@
-# ansible-role-lsyncd
+# ansible-role-lsyncd [![Build Status](https://travis-ci.org/izumimatsuo/ansible-role-lsyncd.svg?branch=master)](https://travis-ci.org/izumimatsuo/ansible-role-lsyncd)
 
-CentOS 7 に lsyncd を導入する ansible role です。
+CentOS 7 に lsyncd (rsync) を導入する ansible role です。
 
 ## 設定項目
 
