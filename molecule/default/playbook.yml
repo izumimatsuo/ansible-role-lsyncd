@@ -1,5 +1,10 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    lsyncd_master_hostname: instance
+    lsyncd_local_sync_targets:
+      - source: /root/src/
+        target: /root/dst/
   roles:
     - role: ansible-role-lsyncd

@@ -6,8 +6,19 @@ CentOS 7 に lsyncd (rsync) を導入する ansible role です。
 
 以下の設定項目を設定して利用すること。
 
-| 項目名             | デフォルト値| 説明               |
-| ------------------ | ----------- | ------------------ |
-| lsyncd_source_dir  | "/root/"    | 同期元ディレクトリ |
-| lsyncd_target_dir  | "/root/"    | 同期先ディレクトリ |
-| lsyncd_ssh_host    | "localhost" | 同期先sshホスト    |
+| 項目名                      | デフォルト値             | 説明                       |
+| --------------------------- | ------------------------ | -------------------------- |
+| lsyncd_master_hostname      | none                     | マスタとなるインベントリ名 |
+| lsyncd_master_identity_file | /root/.ssh/id_rsa_lsyncd | ssh key ファイル           |
+| lsyncd_slave_hosts          | []                       | スレーブホスト             |
+| lsyncd_slave_username       | lsyncd                   | スレープホストのユーザ名   |
+| lsyncd_local_sync_targets   | []                       | ローカルホストでの同期設定 |
+| lsyncd_remote_sync_targets  | []                       | リモートホストとの同期設定 |
+
+同期設定例
+
+```
+lsyncd_local_sync_targets:
+  - source: /root/src/
+    target: /root/dst/
+```

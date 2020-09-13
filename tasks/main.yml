@@ -16,18 +16,53 @@
     dest: /etc/lsyncd.conf
     mode: 0644
   notify: restart lsyncd service
+  when: inventory_hostname == lsyncd_master_hostname
 
 - name: copy lsyncd service file
   template:
     src: lsyncd.service.j2
     dest: /usr/lib/systemd/system/lsyncd.service
     mode: 0644
+  when: inventory_hostname == lsyncd_master_hostname
 
 - name: daemon reload
   systemd: daemon_reload=yes
+  when: inventory_hostname == lsyncd_master_hostname
+
+- name: generate ssh key pair
+  command: ssh-keygen -f {{ lsyncd_master_identity_file }} -q -N ""
+  args:
+    creates: '{{ lsyncd_master_identity_file }}'
+  when: inventory_hostname == lsyncd_master_hostname
+
+- name: copy ssh public key
+  slurp: src={{ lsyncd_master_identity_file }}.pub
+  register: ssh_public_key
+  when: inventory_hostname == lsyncd_master_hostname
+
+- name: create slave user for rsync
+  user:
+    name: '{{ lsyncd_slave_username }}'
+  when: inventory_hostname != lsyncd_master_hostname
+
+- name: add ssh public key
+  authorized_key:
+    user: '{{ lsyncd_slave_username }}'
+    key: '{{ hostvars[lsyncd_master_hostname]["ssh_public_key"]["content"] | b64decode }}'
+  when: inventory_hostname != lsyncd_master_hostname
+
+- name: add sudoers slave user
+  lineinfile:
+    path: '/etc/sudoers.d/{{ lsyncd_slave_username }}'
+    create: yes
+    regexp: '^{{ lsyncd_slave_username }}'
+    line: '{{ lsyncd_slave_username }} ALL=(ALL) NOPASSWD: /usr/bin/rsync'
+    validate: '/usr/sbin/visudo -cf %s'
+  when: inventory_hostname != lsyncd_master_hostname
 
 - name: start lsyncd service
   service:
     name: lsyncd
     state: started
     enabled: yes
+  when: inventory_hostname == lsyncd_master_hostname

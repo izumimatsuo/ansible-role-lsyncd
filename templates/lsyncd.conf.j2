@@ -9,16 +9,34 @@ settings {
   logfile="/var/log/lsyncd.log",
   statusFile="/var/tmp/lsyncd.stat",
   nodaemon=false,
-  insist=1
+  insist=true
 }
+{% for item in lsyncd_local_sync_targets %}
 sync {
-  default.rsyncssh,
-  source="{{ lsyncd_source_dir }}",
-  host="{{ lsyncd_ssh_host }}",
-  targetdir="{{ lsyncd_target_dir }}",
+  default.rsync,
+  source="{{ item.source }}",
+  target="{{ item.target }}",
   delay=1,
   delete=false,
   rsync={
     archive=true
   }
 }
+{% endfor %}
+{% for slave in lsyncd_slave_hosts %}
+{% for item in lsyncd_remote_sync_targets %}
+sync {
+  default.rsyncssh,
+  source="{{ item.source }}",
+  host="{{ slave }}",
+  targetdir="{{ item.target }}",
+  delay=1,
+  delete=false,
+  rsync={
+    archive=true,
+    rsh = "ssh -i {{ lsyncd_master_identity_file }} -l {{ lsyncd_slave_username }} -o StrictHostKeyChecking=no",
+    rsync_path = "sudo /usr/bin/rsync"
+  }
+}
+{% endfor %}
+{% endfor %}

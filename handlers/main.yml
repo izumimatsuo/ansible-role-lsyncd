@@ -4,4 +4,4 @@
   service:
     name: lsyncd
     state: restarted
-  tags: lsyncd
+  when: inventory_hostname == lsyncd_master_hostname

@@ -1,0 +1,17 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: setup ssh keygen package for test
+      yum:
+        name: openssh-clients
+    - name: setup source and target for test
+      file:
+        path: '{{ item }}'
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+      loop:
+        - /root/src
+        - /root/dst
